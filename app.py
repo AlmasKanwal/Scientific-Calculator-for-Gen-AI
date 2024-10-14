@@ -16,7 +16,10 @@ def main():
     st.markdown("<h1 style='text-align: center; color: #0ABAB5;'>Scientific Calculator</h1>", unsafe_allow_html=True)
 
     # Input text box for expression
-    expression = st.text_input("Enter expression:", '')
+    if 'expression' not in st.session_state:
+        st.session_state.expression = ''
+
+    expression = st.text_input("Enter expression:", st.session_state.expression)
 
     # Buttons layout (styled)
     button_style = """
@@ -50,44 +53,43 @@ def main():
 
     # Create buttons
     cols = st.columns(5)
-    
+
     for label in button_labels:
         with cols[button_labels.index(label) % 5]:
             if st.button(label):
                 if label == '=':
-                    output_text.text(calculate(expression))
+                    st.session_state.expression = expression  # Update expression in session state
+                    result = calculate(expression)
+                    output_text.text(result)
                 elif label == 'C':
-                    expression = ''
+                    st.session_state.expression = ''
                     output_text.text('')
                 elif label == 'sqrt':
                     try:
                         result = math.sqrt(float(expression))
-                        expression = str(result)
+                        st.session_state.expression = str(result)
                     except ValueError:
-                        expression = 'Error'
-                    output_text.text(expression)
+                        st.session_state.expression = 'Error'
+                    output_text.text(st.session_state.expression)
                 elif label == 'pow':
                     try:
                         result = math.pow(float(expression), 2)
-                        expression = str(result)
+                        st.session_state.expression = str(result)
                     except ValueError:
-                        expression = 'Error'
-                    output_text.text(expression)
+                        st.session_state.expression = 'Error'
+                    output_text.text(st.session_state.expression)
                 elif label == 'log':
                     try:
                         result = math.log(float(expression))
-                        expression = str(result)
+                        st.session_state.expression = str(result)
                     except ValueError:
-                        expression = 'Error'
-                    output_text.text(expression)
+                        st.session_state.expression = 'Error'
+                    output_text.text(st.session_state.expression)
                 else:
-                    expression += label
-                
-                # Update the input field with the current expression
-                st.session_state['expression'] = expression
+                    st.session_state.expression += label
 
     # Input field for expression, showing the current input
-    st.text_input("Current Expression", value=st.session_state.get('expression', ''), key='input')
+    st.text_input("Current Expression", value=st.session_state.expression, key='input')
 
     # Footer
     st.markdown("<p style='text-align: center; color: #FF69B4;'>Made by Almas Kanwal</p>", unsafe_allow_html=True)
