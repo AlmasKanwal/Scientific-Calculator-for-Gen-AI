@@ -46,23 +46,40 @@ def main():
     ]
 
     cols = st.columns(5)
+    
+    # Result box
+    output_text = st.empty()
+    
     for label in button_labels:
         with cols[button_labels.index(label) % 5]:
             if st.button(label):
                 if label == '=':
-                    output_text = calculate(input_text)
-                    st.text_input("Result", output_text, disabled=True)
+                    output_text.text(calculate(input_text))
                 elif label == 'C':
                     input_text = ''
-                    st.text_input("Result", '', disabled=True)
+                    output_text.text('')
                 elif label == 'sqrt':
-                    input_text = str(math.sqrt(float(input_text)))
+                    try:
+                        result = math.sqrt(float(input_text))
+                        input_text = str(result)
+                    except ValueError:
+                        input_text = 'Error'
+                    output_text.text(input_text)
                 elif label == 'pow':
-                    input_text = str(math.pow(float(input_text), 2))
+                    try:
+                        result = math.pow(float(input_text), 2)
+                        input_text = str(result)
+                    except ValueError:
+                        input_text = 'Error'
+                    output_text.text(input_text)
                 else:
                     input_text += label
+                
                 # Update the input field
-                st.text_input("Enter expression", input_text, key='input')
+                st.session_state['input_text'] = input_text
+    
+    # Input field for expression, showing the current input
+    st.text_input("Current Expression", st.session_state.get('input_text', ''), key='input')
 
     # Footer
     st.markdown("<p style='text-align: center; color: #FF69B4;'>Made by Almas Kanwal</p>", unsafe_allow_html=True)
