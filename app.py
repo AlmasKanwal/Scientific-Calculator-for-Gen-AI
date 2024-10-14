@@ -7,7 +7,7 @@ def calculate(expression):
         # Evaluates the entered expression
         result = eval(expression)
         return str(result)
-    except Exception as e:
+    except Exception:
         return 'Error'
 
 # Streamlit app layout
@@ -16,7 +16,7 @@ def main():
     st.markdown("<h1 style='text-align: center; color: #0ABAB5;'>Scientific Calculator</h1>", unsafe_allow_html=True)
 
     # Input text box for expression
-    input_text = st.text_input("Enter expression", '')
+    expression = st.text_input("Enter expression:", '')
 
     # Buttons layout (styled)
     button_style = """
@@ -45,41 +45,49 @@ def main():
         '0', '.', '=', '+', 'C'
     ]
 
+    # Output text box for result
+    output_text = st.empty()  # Placeholder for result display
+
+    # Create buttons
     cols = st.columns(5)
-    
-    # Result box
-    output_text = st.empty()
     
     for label in button_labels:
         with cols[button_labels.index(label) % 5]:
             if st.button(label):
                 if label == '=':
-                    output_text.text(calculate(input_text))
+                    output_text.text(calculate(expression))
                 elif label == 'C':
-                    input_text = ''
+                    expression = ''
                     output_text.text('')
                 elif label == 'sqrt':
                     try:
-                        result = math.sqrt(float(input_text))
-                        input_text = str(result)
+                        result = math.sqrt(float(expression))
+                        expression = str(result)
                     except ValueError:
-                        input_text = 'Error'
-                    output_text.text(input_text)
+                        expression = 'Error'
+                    output_text.text(expression)
                 elif label == 'pow':
                     try:
-                        result = math.pow(float(input_text), 2)
-                        input_text = str(result)
+                        result = math.pow(float(expression), 2)
+                        expression = str(result)
                     except ValueError:
-                        input_text = 'Error'
-                    output_text.text(input_text)
+                        expression = 'Error'
+                    output_text.text(expression)
+                elif label == 'log':
+                    try:
+                        result = math.log(float(expression))
+                        expression = str(result)
+                    except ValueError:
+                        expression = 'Error'
+                    output_text.text(expression)
                 else:
-                    input_text += label
+                    expression += label
                 
-                # Update the input field
-                st.session_state['input_text'] = input_text
-    
+                # Update the input field with the current expression
+                st.session_state['expression'] = expression
+
     # Input field for expression, showing the current input
-    st.text_input("Current Expression", st.session_state.get('input_text', ''), key='input')
+    st.text_input("Current Expression", value=st.session_state.get('expression', ''), key='input')
 
     # Footer
     st.markdown("<p style='text-align: center; color: #FF69B4;'>Made by Almas Kanwal</p>", unsafe_allow_html=True)
