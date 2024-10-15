@@ -2,7 +2,7 @@ import streamlit as st
 import math
 
 # Title and heading
-st.title("Simple Calculator")
+st.title("Pak Angel Cohort 2")
 st.write("<h3 style='text-align: center; color: teal;'>Simple Calculator</h3>", unsafe_allow_html=True)
 
 # Create a display for the calculator
